@@ -97,6 +97,8 @@
     [ttvc.image setImageWithURL:[NSURL URLWithString:tweet.user.profileImageUrl]];
     ttvc.image.layer.cornerRadius = 5;
     ttvc.image.clipsToBounds = YES;
+    ttvc.retweetImage.alpha = tweet.retweeted ? 1 : .5;
+    ttvc.favoriteImage.alpha = tweet.favorited ? 1 : .5;
     return ttvc;
 }
 

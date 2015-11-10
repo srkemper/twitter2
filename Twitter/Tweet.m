@@ -23,7 +23,7 @@
         self.favorites = dictionary[@"favorite_count"];
         self.tweetId = dictionary[@"id_str"];
         self.retweeted = [[dictionary[@"retweeted"] stringValue] isEqualToString:@"0"] ? NO : YES;
-        self.retweeted = [[dictionary[@"favorited"] stringValue] isEqualToString:@"0"] ? NO : YES;
+        self.favorited = [[dictionary[@"favorited"] stringValue] isEqualToString:@"0"] ? NO : YES;
     }
     return self;
 }
