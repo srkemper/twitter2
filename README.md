@@ -37,7 +37,9 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
+https://imgur.com/QBo2VQ9
 
+(trying to figure out the logged in user's tweets on their profile... been looking at it for an hour and can't figure out what's wrong because it works when i go to another user's profile as in the gif)
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
