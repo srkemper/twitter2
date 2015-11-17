@@ -16,6 +16,7 @@
 #import "ComposeViewController.h"
 #import "UIImageView+AFNetworking.h"
 #import <QuartzCore/QuartzCore.h>
+#import "ProfileViewController.h"
 
 #define blueColor [UIColor colorWithRed:97.0/255 green:163.0/255 blue:226.0/255 alpha:1.0];
 
@@ -23,6 +24,9 @@
 
 @property (strong, nonatomic) NSArray *tweets;
 @property (strong, nonatomic) UIRefreshControl *refreshControl;
+
+@property (strong, nonatomic) UINavigationController *navController;
+@property (strong, nonatomic) NSMutableArray *usersForTweets;
 
 @end
 
@@ -37,6 +41,8 @@
     }
     
     self.navigationItem.title = @"Home";
+    NSLog(@"nav controller %@", self.navigationController);
+    self.navController = self.navigationController;
     self.navigationController.navigationBar.titleTextAttributes = [NSDictionary dictionaryWithObject:[UIColor whiteColor] forKey:NSForegroundColorAttributeName];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Logout" style:UIBarButtonItemStylePlain target:self action:@selector(onLogout:)];
     self.navigationItem.leftBarButtonItem.tintColor = [UIColor whiteColor];
@@ -53,12 +59,15 @@
     self.tweetsTableView.estimatedRowHeight = 100.0;
     self.tweetsTableView.rowHeight = UITableViewAutomaticDimension;
     
+    self.usersForTweets = [NSMutableArray array];
+    
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     [params setObject:@20 forKey:@"count"];
     if (self.mentions) {
         [[TwitterClient sharedInstance] mentionsWithParams:params completion:^(NSArray *tweets, NSError *error) {
             self.tweets = tweets;
             for (Tweet *tweet in tweets) {
+                [self.usersForTweets addObject:tweet.user];
                 NSLog(@"text: %@", tweet.body);
             }
             [self.tweetsTableView reloadData];
@@ -67,6 +76,7 @@
         [[TwitterClient sharedInstance] homeTimelineWithParams:params completion:^(NSArray *tweets, NSError *error) {
             self.tweets = tweets;
             for (Tweet *tweet in tweets) {
+                [self.usersForTweets addObject:tweet.user];
                 NSLog(@"text: %@", tweet.body);
             }
             [self.tweetsTableView reloadData];
@@ -76,10 +86,12 @@
 }
 
 - (void)onRefresh {
+    self.usersForTweets = [NSMutableArray array];
     if (self.mentions) {
         [[TwitterClient sharedInstance] mentionsWithParams:nil completion:^(NSArray *tweets, NSError *error) {
             self.tweets = tweets;
             for (Tweet *tweet in tweets) {
+                [self.usersForTweets addObject:tweet.user];
                 NSLog(@"text: %@", tweet.body);
             }
             [self.tweetsTableView reloadData];
@@ -89,6 +101,7 @@
         [[TwitterClient sharedInstance] homeTimelineWithParams:nil completion:^(NSArray *tweets, NSError *error) {
             self.tweets = tweets;
             for (Tweet *tweet in tweets) {
+                [self.usersForTweets addObject:tweet.user];
                 NSLog(@"text: %@", tweet.body);
             }
             [self.tweetsTableView reloadData];
@@ -120,7 +133,17 @@
     ttvc.image.clipsToBounds = YES;
     ttvc.retweetImage.alpha = tweet.retweeted ? 1 : .5;
     ttvc.favoriteImage.alpha = tweet.favorited ? 1 : .5;
+    [ttvc.image setUserInteractionEnabled:YES];
+    ttvc.image.tag = indexPath.row;
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapOnProfile:)];
+    [ttvc.image addGestureRecognizer:tap];
     return ttvc;
+}
+
+- (IBAction)tapOnProfile:(UITapGestureRecognizer*)sender {
+    UIImageView *image = (UIImageView *) sender.view;
+    ProfileViewController *pvc = [[ProfileViewController alloc] initWithUser:self.usersForTweets[image.tag]];
+    [self.navController pushViewController:pvc animated:YES];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
@@ -128,15 +151,17 @@
     [self.tweetsTableView deselectRowAtIndexPath:indexPath animated:YES];
     DetailsViewController *dvc = [[DetailsViewController alloc] init];
     dvc.tweet = self.tweets[indexPath.row];
-    [self.navigationController pushViewController:dvc animated:YES];
+    [self.navController pushViewController:dvc animated:YES];
 }
 
 - (void)setMentions:(BOOL)mentions {
     _mentions = mentions;
+    self.usersForTweets = [NSMutableArray array];
     if (mentions) {
         [[TwitterClient sharedInstance] mentionsWithParams:nil completion:^(NSArray *tweets, NSError *error) {
             self.tweets = tweets;
             for (Tweet *tweet in tweets) {
+                [self.usersForTweets addObject:tweet.user];
                 NSLog(@"text: %@", tweet.body);
             }
             [self.tweetsTableView reloadData];
@@ -145,6 +170,7 @@
         [[TwitterClient sharedInstance] homeTimelineWithParams:nil completion:^(NSArray *tweets, NSError *error) {
             self.tweets = tweets;
             for (Tweet *tweet in tweets) {
+                [self.usersForTweets addObject:tweet.user];
                 NSLog(@"text: %@", tweet.body);
             }
             [self.tweetsTableView reloadData];
@@ -158,11 +184,7 @@
 
 - (IBAction)composeTweet:(id)sender {
     NSLog(@"compose tweet");
-    NSLog(@"%@", self.navigationController);
-    [self.navigationController pushViewController:[[ComposeViewController alloc] init] animated:YES];
-//    [self transitionFromViewController:self toViewController:[[ComposeViewController alloc] init] duration:0.2 options:UIViewAnimationOptionCurveEaseInOut animations:nil completion:^(BOOL finished) {
-//        NSLog(@"swithced to compose");
-//    }];
+    [self.navController pushViewController:[[ComposeViewController alloc] init] animated:YES];
 //    [self presentViewController:[[ComposeViewController alloc] init] animated:YES completion:nil];
 }
 

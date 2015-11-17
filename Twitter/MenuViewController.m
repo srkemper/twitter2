@@ -61,7 +61,9 @@
         case 1:
         {
             //set user here first
-            self.hamburgerViewController.contentViewController = self.profileViewController;
+            ProfileViewController *pvc = [[ProfileViewController alloc] initWithUser:[User currentUser]];
+//            [self.hamburgerViewController.contentViewController.navigationController pushViewController:pvc animated:YES];
+            self.hamburgerViewController.contentViewController = pvc;
             break;
         }
         case 2:
@@ -72,6 +74,7 @@
         }
         case 3:
         {
+            [User logout];
             break;
         }
     }
