@@ -55,25 +55,46 @@
     
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     [params setObject:@20 forKey:@"count"];
-    [[TwitterClient sharedInstance] homeTimelineWithParams:params completion:^(NSArray *tweets, NSError *error) {
-        self.tweets = tweets;
-        for (Tweet *tweet in tweets) {
-            NSLog(@"text: %@", tweet.body);
-        }
-        [self.tweetsTableView reloadData];
-    }];
+    if (self.mentions) {
+        [[TwitterClient sharedInstance] mentionsWithParams:params completion:^(NSArray *tweets, NSError *error) {
+            self.tweets = tweets;
+            for (Tweet *tweet in tweets) {
+                NSLog(@"text: %@", tweet.body);
+            }
+            [self.tweetsTableView reloadData];
+        }];
+    } else {
+        [[TwitterClient sharedInstance] homeTimelineWithParams:params completion:^(NSArray *tweets, NSError *error) {
+            self.tweets = tweets;
+            for (Tweet *tweet in tweets) {
+                NSLog(@"text: %@", tweet.body);
+            }
+            [self.tweetsTableView reloadData];
+        }];
+    }
     [self.tweetsTableView registerNib:[UINib nibWithNibName:@"TweetTableViewCell" bundle:nil]forCellReuseIdentifier:@"tweetCell"];
 }
 
 - (void)onRefresh {
-    [[TwitterClient sharedInstance] homeTimelineWithParams:nil completion:^(NSArray *tweets, NSError *error) {
-        self.tweets = tweets;
-        for (Tweet *tweet in tweets) {
-            NSLog(@"text: %@", tweet.body);
-        }
-        [self.tweetsTableView reloadData];
-        [self.refreshControl endRefreshing];
-    }];
+    if (self.mentions) {
+        [[TwitterClient sharedInstance] mentionsWithParams:nil completion:^(NSArray *tweets, NSError *error) {
+            self.tweets = tweets;
+            for (Tweet *tweet in tweets) {
+                NSLog(@"text: %@", tweet.body);
+            }
+            [self.tweetsTableView reloadData];
+            [self.refreshControl endRefreshing];
+        }];
+    } else {
+        [[TwitterClient sharedInstance] homeTimelineWithParams:nil completion:^(NSArray *tweets, NSError *error) {
+            self.tweets = tweets;
+            for (Tweet *tweet in tweets) {
+                NSLog(@"text: %@", tweet.body);
+            }
+            [self.tweetsTableView reloadData];
+            [self.refreshControl endRefreshing];
+        }];
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -103,10 +124,32 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
+    NSLog(@"selected row %ld", indexPath.row);
     [self.tweetsTableView deselectRowAtIndexPath:indexPath animated:YES];
     DetailsViewController *dvc = [[DetailsViewController alloc] init];
     dvc.tweet = self.tweets[indexPath.row];
     [self.navigationController pushViewController:dvc animated:YES];
+}
+
+- (void)setMentions:(BOOL)mentions {
+    _mentions = mentions;
+    if (mentions) {
+        [[TwitterClient sharedInstance] mentionsWithParams:nil completion:^(NSArray *tweets, NSError *error) {
+            self.tweets = tweets;
+            for (Tweet *tweet in tweets) {
+                NSLog(@"text: %@", tweet.body);
+            }
+            [self.tweetsTableView reloadData];
+        }];
+    } else {
+        [[TwitterClient sharedInstance] homeTimelineWithParams:nil completion:^(NSArray *tweets, NSError *error) {
+            self.tweets = tweets;
+            for (Tweet *tweet in tweets) {
+                NSLog(@"text: %@", tweet.body);
+            }
+            [self.tweetsTableView reloadData];
+        }];
+    }
 }
 
 - (IBAction)onLogout:(id)sender {
@@ -115,7 +158,11 @@
 
 - (IBAction)composeTweet:(id)sender {
     NSLog(@"compose tweet");
+    NSLog(@"%@", self.navigationController);
     [self.navigationController pushViewController:[[ComposeViewController alloc] init] animated:YES];
+//    [self transitionFromViewController:self toViewController:[[ComposeViewController alloc] init] duration:0.2 options:UIViewAnimationOptionCurveEaseInOut animations:nil completion:^(BOOL finished) {
+//        NSLog(@"swithced to compose");
+//    }];
 //    [self presentViewController:[[ComposeViewController alloc] init] animated:YES completion:nil];
 }
 

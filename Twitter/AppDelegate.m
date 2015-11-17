@@ -12,6 +12,8 @@
 #import "User.h"
 #import "Tweet.h"
 #import "TweetsViewController.h"
+#import "HamburgerViewController.h"
+#import "MenuViewController.h"
 
 @interface AppDelegate ()
 
@@ -23,25 +25,35 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    HamburgerViewController *hamburgerViewController = [[HamburgerViewController alloc] initWithNibName:@"HamburgerViewController" bundle:nil];
+    [self.window setRootViewController:hamburgerViewController];
+    [self.window makeKeyAndVisible];
     
+    MenuViewController *menuViewController = [[MenuViewController alloc] initWithNibName:@"MenuViewController" bundle:nil];
+    [hamburgerViewController setMenuViewController:menuViewController];
+    menuViewController.hamburgerViewController = hamburgerViewController;
+
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidLogout) name:userDidLogoutNotification object:nil];
+
+    TweetsViewController *homeTimelineController = [[TweetsViewController alloc] initWithNibName:@"TweetsViewController" bundle:nil];
+    [homeTimelineController setMentions:NO];
+
+    menuViewController.homeTimelineController = homeTimelineController;
     
-    TweetsViewController *mainViewController = [[TweetsViewController alloc] initWithNibName:@"TweetsViewController" bundle:nil];
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:homeTimelineController];
     
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:mainViewController];
+    NSLog(@"%@", homeTimelineController.navigationController);
     
     [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
     
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    [self.window setRootViewController:navigationController];
-    [self.window makeKeyAndVisible];
+    hamburgerViewController.contentViewController = navigationController;
     
     User *user = [User currentUser];
     if (user != nil) {
         NSLog(@"Welcome %@", user.name);
     } else {
         NSLog(@"Not logged in");
-        [mainViewController presentViewController:[[LoginViewController alloc] init] animated:NO completion:nil];
+        [hamburgerViewController presentViewController:[[LoginViewController alloc] init] animated:NO completion:nil];
     }
     
     return YES;

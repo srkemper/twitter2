@@ -10,5 +10,6 @@
 
 @interface TweetsViewController : UIViewController
 @property (weak, nonatomic) IBOutlet UITableView *tweetsTableView;
+@property (nonatomic, assign) BOOL mentions;
 
 @end

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8191" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="HamburgerViewController">
+            <connections>
+                <outlet property="contentView" destination="Py8-5m-oTi" id="FXP-bI-fcU"/>
+                <outlet property="leftMarginConstraint" destination="edm-1e-vuv" id="igO-p3-KMt"/>
+                <outlet property="menuView" destination="JWa-2J-MA6" id="w4j-RW-DeU"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JWa-2J-MA6">
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                    <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Py8-5m-oTi">
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                    <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                    <gestureRecognizers/>
+                    <connections>
+                        <outletCollection property="gestureRecognizers" destination="bYl-bO-WHY" appends="YES" id="NFx-3n-KAM"/>
+                    </connections>
+                </view>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="JWa-2J-MA6" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="Efp-iP-igh"/>
+                <constraint firstItem="JWa-2J-MA6" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="GfG-PY-YQb"/>
+                <constraint firstAttribute="bottom" secondItem="JWa-2J-MA6" secondAttribute="bottom" id="Sbt-nZ-NIq"/>
+                <constraint firstAttribute="bottom" secondItem="Py8-5m-oTi" secondAttribute="bottom" id="Xbu-Ei-DsG"/>
+                <constraint firstItem="Py8-5m-oTi" firstAttribute="width" secondItem="i5M-Pr-FkT" secondAttribute="width" id="Xcr-WF-uM0"/>
+                <constraint firstItem="Py8-5m-oTi" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="edm-1e-vuv"/>
+                <constraint firstAttribute="trailing" secondItem="JWa-2J-MA6" secondAttribute="trailing" id="hm1-nB-eMe"/>
+                <constraint firstItem="Py8-5m-oTi" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="xRa-Yy-svm"/>
+            </constraints>
+            <point key="canvasLocation" x="325" y="259"/>
+        </view>
+        <panGestureRecognizer minimumNumberOfTouches="1" id="bYl-bO-WHY">
+            <connections>
+                <action selector="onPanGesture:" destination="-1" id="8u5-xG-wYX"/>
+            </connections>
+        </panGestureRecognizer>
+    </objects>
+</document>
