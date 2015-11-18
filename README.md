@@ -41,6 +41,9 @@ https://imgur.com/QBo2VQ9
 
 (trying to figure out the logged in user's tweets on their profile... been looking at it for an hour and can't figure out what's wrong because it works when i go to another user's profile as in the gif)
 
+FIXED VERSION - didn't make my reference to ProfileViewController strong -_-
+https://imgur.com/E3bPRlg
+
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
