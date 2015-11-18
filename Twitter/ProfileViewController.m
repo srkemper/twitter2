@@ -34,8 +34,8 @@
     // Do any additional setup after loading the view from its nib.
     [self updateViews];
     
-    self.tweetsTableView.delegate = self;
     self.tweetsTableView.dataSource = self;
+    self.tweetsTableView.delegate = self;
     self.tweetsTableView.estimatedRowHeight = 100.0;
     self.tweetsTableView.rowHeight = UITableViewAutomaticDimension;
     
@@ -48,12 +48,14 @@
             NSLog(@"text: %@", tweet.body);
         }
         [self.tweetsTableView reloadData];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.tweetsTableView reloadData];
+        });
     }];
     [self.tweetsTableView registerNib:[UINib nibWithNibName:@"TweetTableViewCell" bundle:nil]forCellReuseIdentifier:@"tweetCell"];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSLog(@"cellforrow %ld", indexPath.row);
     TweetTableViewCell *ttvc = [self.tweetsTableView dequeueReusableCellWithIdentifier:@"tweetCell"];
     Tweet *tweet = self.tweets[indexPath.row];
     ttvc.tweetLabel.text = tweet.body;
@@ -75,11 +77,16 @@
     return self.tweets.count;
 }
 
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
+}
+
 - (id)initWithUser:(User *)user {
     self = [super init];
     _user = user;
     if (user) {
         [self updateViews];
+        [self.tweetsTableView reloadData];
     }
     return self;
 }
@@ -101,7 +108,7 @@
         self.profileImageView.layer.cornerRadius = 5;
         self.profileImageView.clipsToBounds = YES;
     }
-    [self.view updateConstraintsIfNeeded];
+//    [self.view updateConstraintsIfNeeded];
 }
 
 - (void)setUser:(User *)user {

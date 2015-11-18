@@ -61,9 +61,9 @@
         case 1:
         {
             //set user here first
-            ProfileViewController *pvc = [[ProfileViewController alloc] initWithUser:[User currentUser]];
+            self.profileViewController = [[ProfileViewController alloc] initWithUser:[User currentUser]];
 //            [self.hamburgerViewController.contentViewController.navigationController pushViewController:pvc animated:YES];
-            self.hamburgerViewController.contentViewController = pvc;
+            self.hamburgerViewController.contentViewController = self.profileViewController;
             break;
         }
         case 2:
